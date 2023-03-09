@@ -1,6 +1,8 @@
 package com.example.encryptfolder.ui.AddDocument;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +26,7 @@ public class AddNewDocument extends Fragment {
     private View root;
     private static final int CAMERA_REQUEST = 1888;
     private static final int PICKFILE_RESULT_CODE = 8778;
+    ImageView chosenImage;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class AddNewDocument extends Fragment {
         binding = FragmentAddNewDocumentBinding.inflate(inflater, container, false);
         root = binding.getRoot();
         Button chooseIMage = root.findViewById(R.id.choose_image);
-        ImageView chosenImage = root.findViewById(R.id.imageView);
+        chosenImage = root.findViewById(R.id.imageView);
         Button takePicture = root.findViewById(R.id.take_picture);
         Button addDocument = root.findViewById(R.id.choose_document);
         ActivityResultLauncher<PickVisualMediaRequest> gfgMediaPicker = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
@@ -52,11 +55,11 @@ public class AddNewDocument extends Fragment {
             }
         });
         takePicture.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
             }
         });
         addDocument.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +74,6 @@ public class AddNewDocument extends Fragment {
 
         return root;
     }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -15,14 +15,14 @@
         tools:layout="@layout/fragment_add_new_document" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.encryptfolder.ui.gallery.GalleryFragment"
+        android:id="@+id/nav_account_settings"
+        android:name="com.example.encryptfolder.ui.accountSettings.AccountSettingsFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.encryptfolder.ui.slideshow.SlideshowFragment"
+        android:id="@+id/nav_settings"
+        android:name="com.example.encryptfolder.ui.Settings.SettingsFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>

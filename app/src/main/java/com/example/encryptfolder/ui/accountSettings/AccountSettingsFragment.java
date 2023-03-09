@@ -1,4 +1,4 @@
-package com.example.encryptfolder.ui.gallery;
+package com.example.encryptfolder.ui.accountSettings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.encryptfolder.databinding.FragmentGalleryBinding;
 
-public class GalleryFragment extends Fragment {
+public class AccountSettingsFragment extends Fragment {
 
     private FragmentGalleryBinding binding;
 

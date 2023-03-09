@@ -13,11 +13,11 @@
             android:icon="@drawable/ic_baseline_upload_file_24"
             android:title="Add New Document" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_account_settings"
             android:icon="@drawable/ic_baseline_settings_accessibility_24"
             android:title="@string/menu_gallery" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/menu_slideshow" />
         <item

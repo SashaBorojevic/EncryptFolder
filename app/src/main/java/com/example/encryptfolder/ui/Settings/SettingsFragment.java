@@ -1,4 +1,4 @@
-package com.example.encryptfolder.ui.slideshow;
+package com.example.encryptfolder.ui.Settings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.encryptfolder.databinding.FragmentSlideshowBinding;
 
-public class SlideshowFragment extends Fragment {
+public class SettingsFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
 

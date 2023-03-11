@@ -1,31 +1,19 @@
 package com.example.encryptfolder.ui.Database;
 
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
 import android.util.Base64;
 
 import java.security.Key;
-import java.security.KeyStore;
-import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
-public class AESCrypt {
+public class AESCrypt
+{
     private static final String ALGORITHM = "AES";
+    private static final String KEY = "1Hbfh667adfDEJ78";
 
-    public static String Encrypt(String value) throws Exception
-    {
-        SecretKey key = generateKey();
-        char[] password = "tcejorPlaniF694TPMC".toCharArray();
-        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
-        ks.load(null);
-        KeyStore.ProtectionParameter protectionParam = new KeyStore.PasswordProtection(password);
-        KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(key);
-        //Set the entry to the keystore
-        ks.setEntry("secretKeyAlias", secretKeyEntry, protectionParam);
-
+    public static String Encrypt(String value) throws Exception {
+        Key key = generateKey();
         Cipher cipher = Cipher.getInstance(AESCrypt.ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, key);
         byte [] encryptedByteValue = cipher.doFinal(value.getBytes("utf-8"));
@@ -33,15 +21,8 @@ public class AESCrypt {
         return encryptedValue64;
 
     }
-
-    public static String Decrypt(String value) throws Exception
-    {
-        //retrive a key
-        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
-        ks.load(null);
-        KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry)ks.getEntry("key1", null);
-        SecretKey key = entry.getSecretKey();
-
+    public String Decrypt(String value) throws Exception {
+        Key key = generateKey();
         Cipher cipher = Cipher.getInstance(AESCrypt.ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] decryptedValue64 = Base64.decode(value, Base64.DEFAULT);
@@ -51,16 +32,8 @@ public class AESCrypt {
 
     }
 
-    private static SecretKey generateKey() throws Exception {
-        KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder("key1",
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT);
-        KeyGenParameterSpec keySpec = builder
-                .setKeySize(256)
-                .setRandomizedEncryptionRequired(true)
-                .build();
-        KeyGenerator kg = KeyGenerator.getInstance("AES", "AndroidKeyStore");
-        kg.init(keySpec);
-        SecretKey key = kg.generateKey();
+    private static Key generateKey() throws Exception {
+        Key key = new SecretKeySpec(AESCrypt.KEY.getBytes(),AESCrypt.ALGORITHM);
         return key;
     }
 }

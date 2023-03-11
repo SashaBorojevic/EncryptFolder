@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ public class AddNewDocument extends Fragment {
     private static final int CAMERA_REQUEST = 1888;
     private static final int PICKFILE_RESULT_CODE = 8778;
     ImageView chosenImage;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -79,4 +82,5 @@ public class AddNewDocument extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
 }

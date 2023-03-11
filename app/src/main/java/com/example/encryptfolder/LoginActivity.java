@@ -10,27 +10,66 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.encryptfolder.ui.Database.AESCrypt;
+import com.example.encryptfolder.ui.Database.DBHelper;
+
 public class LoginActivity extends AppCompatActivity {
     ProgressBar loading;
+    EditText user;
+    EditText pass;
+    DBHelper db;
+    AESCrypt encrypt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_login);
         Button login = findViewById(R.id.login);
-        EditText user = findViewById(R.id.username);
-        EditText pass = findViewById(R.id.password);
+        user = findViewById(R.id.username);
+        pass = findViewById(R.id.password);
         loading = findViewById(R.id.loading);
         Button createAccount = findViewById(R.id.createAccount);
-
-
+        db = new DBHelper(LoginActivity.this);
+        encrypt = new AESCrypt();
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loading.setVisibility(View.VISIBLE);
-                Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(i);
+                String userName = user.getText().toString();
+                String password = pass.getText().toString();
+                String userPassword = db.getUserPassword(userName);
+                if (userName.isEmpty() && password.isEmpty()){
+                    Toast.makeText(LoginActivity.this, "Please enter a valid Username and Password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (userName.isEmpty()){
+                    Toast.makeText(LoginActivity.this, "Please enter a valid Username", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (password.isEmpty()){
+                    Toast.makeText(LoginActivity.this, "Please enter a Password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (userPassword!=null){
+                    try {
+                        if(password.matches(encrypt.Decrypt(userPassword))) {
+                            loading.setVisibility(View.VISIBLE);
+                            Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                        }
+                        else {
+                            Toast.makeText(LoginActivity.this, "Incorrect Password!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else {
+                    Toast.makeText(LoginActivity.this, "Invalid Username!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
         });
         createAccount.setOnClickListener(new View.OnClickListener() {

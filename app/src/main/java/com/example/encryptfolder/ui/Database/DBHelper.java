@@ -43,7 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
                                   String lastName,
                                   String email,
                                   String phoneNumber) {
-        //insert employee into database
+        //insert user into database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
@@ -69,6 +69,19 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public String getUserPassword(String username){
+        //check if username exists already
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?", new String[] {String.valueOf(username)});
+        if (cursor.moveToFirst()) {
+            int placeColumn = cursor.getColumnIndex("password");
+            String password = cursor.getString(placeColumn);
+            return password;
+        }
+        else{
+            return null;
+        }
+    }
     public Boolean updateEmployeeOpening(int employeeID, boolean opening){
         //update employees opening training in database
         SQLiteDatabase DB = this.getWritableDatabase();

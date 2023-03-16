@@ -1,5 +1,7 @@
 package com.example.encryptfolder.ui.AddDocument;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,6 +31,7 @@ public class AddNewDocument extends Fragment {
     private static final int CAMERA_REQUEST = 1888;
     private static final int PICKFILE_RESULT_CODE = 8778;
     ImageView chosenImage;
+    ImageView cameraImage;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -40,6 +43,7 @@ public class AddNewDocument extends Fragment {
         binding = FragmentAddNewDocumentBinding.inflate(inflater, container, false);
         root = binding.getRoot();
         Button chooseIMage = root.findViewById(R.id.choose_image);
+        cameraImage = root.findViewById(R.id.cameraImage);
         chosenImage = root.findViewById(R.id.imageView);
         Button takePicture = root.findViewById(R.id.take_picture);
         Button addDocument = root.findViewById(R.id.choose_document);
@@ -65,6 +69,7 @@ public class AddNewDocument extends Fragment {
 
             }
         });
+
         addDocument.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +81,14 @@ public class AddNewDocument extends Fragment {
         });
 
         return root;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            cameraImage.setImageBitmap(imageBitmap);
+        }
     }
     @Override
     public void onDestroyView() {

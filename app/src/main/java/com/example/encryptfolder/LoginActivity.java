@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.encryptfolder.ui.Database.AESCrypt;
 import com.example.encryptfolder.ui.Database.DBHelper;
+import com.example.encryptfolder.ui.Database.SaveSharedPreference;
 
 public class LoginActivity extends AppCompatActivity {
     ProgressBar loading;
@@ -51,12 +53,16 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (userPassword!=null){
                     try {
-                        if(password.matches(encrypt.Decrypt(userPassword))) {
+                        if(encrypt.Encrypt(password).equals(userPassword)) {
                             loading.setVisibility(View.VISIBLE);
+                            Log.d("Database Password: ",userPassword);
+                            Log.d("User entered password: ",encrypt.Encrypt(password));
+                            SaveSharedPreference.setUserName(LoginActivity.this, userName);
                             Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
+                            db.close();
                         }
                         else {
                             Toast.makeText(LoginActivity.this, "Incorrect Password!", Toast.LENGTH_SHORT).show();
@@ -85,5 +91,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         loading.setVisibility(View.GONE);
+        user.getText().clear();
+        pass.getText().clear();
+
     }
 }

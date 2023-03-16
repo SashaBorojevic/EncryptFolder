@@ -19,6 +19,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -26,7 +27,7 @@ import javax.crypto.NoSuchPaddingException;
 
 public class CreateAccount extends AppCompatActivity {
 
-    private TextInputLayout firstName, lastName, email, phone, userName, password, confirmassword;
+    private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
     DBHelper db;
     AESCrypt encrypt;
     @Override
@@ -40,8 +41,13 @@ public class CreateAccount extends AppCompatActivity {
         phone = findViewById(R.id.phoneNumber);
         userName = findViewById(R.id.createUsername);
         password = findViewById(R.id.password);
-        confirmassword = findViewById(R.id.confirmPassword);
+        confirmpassword = findViewById(R.id.confirmPassword);
         Button newAccount = findViewById(R.id.makeNewAccount);
+
+        Pattern specailCharPatten = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+        Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
+        Pattern lowerCasePatten = Pattern.compile("[a-z ]");
+        Pattern digitCasePatten = Pattern.compile("[0-9 ]");
 
         encrypt = new AESCrypt();
         db = new DBHelper(CreateAccount.this);
@@ -55,7 +61,7 @@ public class CreateAccount extends AppCompatActivity {
                 String Phone = phone.getEditText().getText().toString();
                 String UserName = userName.getEditText().getText().toString();
                 String Password = password.getEditText().getText().toString();
-                String ConfirmPassword = confirmassword.getEditText().getText().toString();
+                String ConfirmPassword = confirmpassword.getEditText().getText().toString();
                 // validating if the text fields are empty or not.
                 if (!Email.isEmpty()){
                     if (!Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {
@@ -71,23 +77,39 @@ public class CreateAccount extends AppCompatActivity {
                     Toast.makeText(CreateAccount.this, "Username already used!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (Password.length() < 8) {
+                    Toast.makeText(CreateAccount.this, "Password length must have at least 8 characters!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!UpperCasePatten.matcher(Password).find()) {
+                    Toast.makeText(CreateAccount.this, "Password must have at least 1 uppercase character!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!lowerCasePatten.matcher(Password).find()) {
+                    Toast.makeText(CreateAccount.this, "Password must have at least one lowercase character !", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!digitCasePatten.matcher(Password).find()) {
+                    Toast.makeText(CreateAccount.this, "Password must have at least one digit!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (!Password.equals(ConfirmPassword)){
                     Toast.makeText(CreateAccount.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
                     return;
-                }
-                try {
-                    String EncryptedPassword = encrypt.Encrypt(Password);
-                    db.AddUser(UserName, EncryptedPassword, FirstName, LastName, Email, Phone);
-                    Log.d("Encrypted Password",EncryptedPassword);
-                    Log.d("Password",Password);
-                    db.close();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateAccount.this);
                 builder.setMessage("Are you sure you want to create a new account?");
                 builder.setPositiveButton("Yes, Log in!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            String EncryptedPassword = encrypt.Encrypt(Password);
+                            db.AddUser(UserName, EncryptedPassword, FirstName, LastName, Email, Phone);
+                            Log.d("Encrypted Password",EncryptedPassword);
+                            Log.d("Password",Password);
+                            db.close();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                         finish();
                     }
                 });

@@ -12,7 +12,7 @@ public class AESCrypt
     private static final String ALGORITHM = "AES";
     private static final String KEY = "1Hbfh667adfDEJ78";
 
-    public static String Encrypt(String value) throws Exception {
+    public String Encrypt(String value) throws Exception {
         Key key = generateKey();
         Cipher cipher = Cipher.getInstance(AESCrypt.ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, key);

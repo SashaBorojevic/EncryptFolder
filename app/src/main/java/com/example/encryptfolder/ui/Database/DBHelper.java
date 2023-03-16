@@ -82,82 +82,29 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
     }
-    public Boolean updateEmployeeOpening(int employeeID, boolean opening){
-        //update employees opening training in database
+    public Boolean updateUser(String oldUsername, String newUsername, String newPassword, String firstName, String lastName,String email,
+                              String phone){
+        //update employees email in database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("qualifiedForOpening", opening);
-        Cursor cursor = DB.rawQuery("Select * from EmployeeDetails where employeeID = ?",
-                new String[] {String.valueOf(employeeID)});
+        if (!newUsername.isEmpty()){contentValues.put("username", newUsername);}
+        if (!newPassword.isEmpty()){contentValues.put("password", newPassword);}
+        if (!firstName.isEmpty()){contentValues.put("firstName", firstName);}
+        if (!lastName.isEmpty()){contentValues.put("lastName", lastName);}
+        if (!email.isEmpty()){contentValues.put("emailAddress", email);}
+        if (!phone.isEmpty()){contentValues.put("phoneNumber", phone);}
+
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?",
+                new String[] {String.valueOf(oldUsername)});
         if(cursor.getCount()>0){
-            long result = DB.update("EmployeeDetails",
+            long result = DB.update("Users",
                     contentValues,
-                    "employeeID=?",
-                    new String[] {String.valueOf(employeeID)});
+                    "username=?",
+                    new String[] {String.valueOf(oldUsername)});
             cursor.close();
             return result != -1;
         }else{
             return false;
         }
-    }
-
-    public Boolean updateEmployeeClosing(int employeeID, boolean closing){
-        //update employees closing training in database
-        SQLiteDatabase DB = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("qualifiedForClosing", closing);
-        Cursor cursor = DB.rawQuery("Select * from EmployeeDetails where employeeID = ?",
-                new String[] {String.valueOf(employeeID)});
-        if(cursor.getCount()>0){
-            long result = DB.update("EmployeeDetails",
-                    contentValues,
-                    "employeeID=?",
-                    new String[] {String.valueOf(employeeID)});
-            cursor.close();
-            return result != -1;
-        }else{
-            return false;
-        }
-    }
-
-    public Boolean deleteEmployee(int employeeID){
-        //delete employee from database
-        //finds an employee in the database with a given ID and change the value of "active" from 1 to 0
-        SQLiteDatabase DB = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        boolean success = true;
-        contentValues.put("isActive", 0);
-        Cursor cursor = DB.rawQuery("Select * from EmployeeDetails where employeeID = ?",
-                new String[] {String.valueOf(employeeID)});
-        Cursor cursor2 = DB.rawQuery("Select * from EMPLOYEEAVAILIBILITY where employeeID = ?",
-                new String[] {String.valueOf(employeeID)});
-        if(cursor.getCount()>0){
-            long result = DB.update("EmployeeDetails",
-                    contentValues,
-                    "employeeID=?",
-                    new String[] {String.valueOf(employeeID)});
-            cursor.close();
-            success = result != -1;
-        } else{
-            success = false;
-        }
-        if(cursor2.getCount()>0){
-            long result = DB.update("EMPLOYEEAVAILIBILITY",
-                    contentValues,
-                    "employeeID=?",
-                    new String[] {String.valueOf(employeeID)});
-            cursor.close();
-            success = success && result != -1;
-        } else {
-            success = false;
-        }
-        return success;
-    }
-
-
-    public Cursor getActiveEmployees(){
-        //gets all employees that have 1 in the "active" category
-        SQLiteDatabase DB = this.getWritableDatabase();
-        return DB.rawQuery("Select * from EmployeeDetails where isActive = 1", null);
     }
 }

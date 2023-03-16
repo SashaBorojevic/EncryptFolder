@@ -53,10 +53,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (userPassword!=null){
                     try {
+                        Log.d("Database Password: ",userPassword);
+                        Log.d("User entered password: ",encrypt.Encrypt(password));
                         if(encrypt.Encrypt(password).equals(userPassword)) {
                             loading.setVisibility(View.VISIBLE);
-                            Log.d("Database Password: ",userPassword);
-                            Log.d("User entered password: ",encrypt.Encrypt(password));
                             SaveSharedPreference.setUserName(LoginActivity.this, userName);
                             Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);

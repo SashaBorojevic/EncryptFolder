@@ -31,6 +31,7 @@ public class AccountSettingsFragment extends Fragment {
     private FragmentGalleryBinding binding;
     private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
     DBHelper db;
+    String EncryptedPassword = "";
     AESCrypt encrypt;
 
 
@@ -51,7 +52,6 @@ public class AccountSettingsFragment extends Fragment {
         confirmpassword = root.findViewById(R.id.confirmPassword);
         Button updateAccount = root.findViewById(R.id.update);
 
-        Pattern specailCharPatten = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
         Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
         Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
@@ -80,28 +80,32 @@ public class AccountSettingsFragment extends Fragment {
                     Toast.makeText(getActivity(), "Username already used!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (Password.length() < 8) {
-                    Toast.makeText(getActivity(), "Password length must have at least 8 characters!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!UpperCasePatten.matcher(Password).find()) {
-                    Toast.makeText(getActivity(), "Password must have at least 1 uppercase character!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!lowerCasePatten.matcher(Password).find()) {
-                    Toast.makeText(getActivity(), "Password must have at least one lowercase character !", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!digitCasePatten.matcher(Password).find()) {
-                    Toast.makeText(getActivity(), "Password must have at least one digit!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!Password.equals(ConfirmPassword)){
-                    Toast.makeText(getActivity(), "Passwords do not match!", Toast.LENGTH_SHORT).show();
-                    return;
+                if (!Password.isEmpty()){
+                    if (Password.length() < 8) {
+                        Toast.makeText(getActivity(), "Password length must have at least 8 characters!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!UpperCasePatten.matcher(Password).find()) {
+                        Toast.makeText(getActivity(), "Password must have at least 1 uppercase character!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!lowerCasePatten.matcher(Password).find()) {
+                        Toast.makeText(getActivity(), "Password must have at least one lowercase character !", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!digitCasePatten.matcher(Password).find()) {
+                        Toast.makeText(getActivity(), "Password must have at least one digit!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!Password.equals(ConfirmPassword)) {
+                        Toast.makeText(getActivity(), "Passwords do not match!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
                 try {
-                    String EncryptedPassword = encrypt.Encrypt(Password);
+                    if (!Password.isEmpty()) {
+                        EncryptedPassword = encrypt.Encrypt(Password);
+                    }
                     db.updateUser(SaveSharedPreference.getUserName(getContext()),UserName, EncryptedPassword, FirstName, LastName, Email, Phone);
                     Log.d("Encrypted Password",EncryptedPassword);
                     Log.d("Password",Password);

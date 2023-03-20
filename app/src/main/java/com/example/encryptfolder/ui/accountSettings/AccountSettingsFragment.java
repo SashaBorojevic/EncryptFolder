@@ -104,7 +104,7 @@ public class AccountSettingsFragment extends Fragment {
                 }
                 try {
                     if (!Password.isEmpty()) {
-                        EncryptedPassword = encrypt.Encrypt(Password);
+                        //EncryptedPassword = encrypt.Encrypt(UserName ,Password);
                     }
                     db.updateUser(SaveSharedPreference.getUserName(getContext()),UserName, EncryptedPassword, FirstName, LastName, Email, Phone);
                     Log.d("Encrypted Password",EncryptedPassword);

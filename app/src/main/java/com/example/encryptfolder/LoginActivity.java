@@ -13,14 +13,23 @@ import android.widget.Toast;
 
 import com.example.encryptfolder.ui.Database.AESCrypt;
 import com.example.encryptfolder.ui.Database.DBHelper;
+import com.example.encryptfolder.ui.Database.DeCryptor;
+import com.example.encryptfolder.ui.Database.EnCryptor;
+import com.example.encryptfolder.ui.Database.SaltedHash;
 import com.example.encryptfolder.ui.Database.SaveSharedPreference;
+
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 public class LoginActivity extends AppCompatActivity {
     ProgressBar loading;
     EditText user;
     EditText pass;
+    SaltedHash Sl;
     DBHelper db;
-    AESCrypt encrypt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         loading = findViewById(R.id.loading);
         Button createAccount = findViewById(R.id.createAccount);
         db = new DBHelper(LoginActivity.this);
-        encrypt = new AESCrypt();
+        Sl = new SaltedHash();
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,9 +62,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (userPassword!=null){
                     try {
+                        String hash = Sl.hashPassword(password);
+                        String salt = db.getUserSalt(userName);
+                        String UserEnteredPassword = salt + hash;
                         Log.d("Database Password: ",userPassword);
-                        Log.d("User entered password: ",encrypt.Encrypt(password));
-                        if(encrypt.Encrypt(password).equals(userPassword)) {
+                        Log.d("User entered password: ",UserEnteredPassword);
+                        if(UserEnteredPassword.equals(userPassword)) {
                             loading.setVisibility(View.VISIBLE);
                             SaveSharedPreference.setUserName(LoginActivity.this, userName);
                             Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();

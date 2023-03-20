@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.io.UnsupportedEncodingException;
+import java.sql.Blob;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +28,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "firstName TEXT," +
                 "lastName TEXT," +
                 "emailAddress TEXT, " +
-                "phoneNumber TEXT)");
+                "phoneNumber TEXT, " +
+                "salt TEXT)");
         DB.execSQL("create Table Documents(" +
                 "username TEXT," +
                 "dateAdded TEXT," +
@@ -39,10 +43,11 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(DB);
     }
 
-    public long AddUser(String username, String password,String firstName,
+    public long AddUser(String username,String password,String firstName,
                                   String lastName,
                                   String email,
-                                  String phoneNumber) {
+                                  String phoneNumber,
+                                  String salt) {
         //insert user into database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -52,6 +57,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("lastName", lastName);
         contentValues.put("emailAddress", email);
         contentValues.put("phoneNumber", phoneNumber);
+        contentValues.put("salt", salt);
 
         long result = DB.insert("Users", null, contentValues);
         return result;
@@ -105,6 +111,37 @@ public class DBHelper extends SQLiteOpenHelper {
             return result != -1;
         }else{
             return false;
+        }
+    }
+    public Boolean addPassword(String username, String password){
+        //update employees email in database
+        SQLiteDatabase DB = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("password", password);
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?",
+                new String[] {String.valueOf(username)});
+        if(cursor.getCount()>0){
+            long result = DB.update("Users",
+                    contentValues,
+                    "username=?",
+                    new String[] {String.valueOf(username)});
+            cursor.close();
+            return result != -1;
+        }else{
+            return false;
+        }
+    }
+    public String getUserSalt(String username){
+
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?", new String[] {String.valueOf(username)});
+        if (cursor.moveToFirst()) {
+            int placeColumn = cursor.getColumnIndex("salt");
+            String salt = cursor.getString(placeColumn);
+            return salt;
+        }
+        else{
+            return null;
         }
     }
 }

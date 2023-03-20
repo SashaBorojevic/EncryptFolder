@@ -12,13 +12,21 @@ import android.widget.Toast;
 
 import com.example.encryptfolder.ui.Database.AESCrypt;
 import com.example.encryptfolder.ui.Database.DBHelper;
+import com.example.encryptfolder.ui.Database.DeCryptor;
+import com.example.encryptfolder.ui.Database.EnCryptor;
+import com.example.encryptfolder.ui.Database.SaltedHash;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.UnrecoverableEntryException;
+import java.sql.Blob;
 import java.util.regex.Pattern;
 
 import javax.crypto.BadPaddingException;
@@ -29,7 +37,7 @@ public class CreateAccount extends AppCompatActivity {
 
     private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
     DBHelper db;
-    AESCrypt encrypt;
+    SaltedHash Sl;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,20 +56,19 @@ public class CreateAccount extends AppCompatActivity {
         Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
         Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
-
-        encrypt = new AESCrypt();
+        Sl = new SaltedHash();
         db = new DBHelper(CreateAccount.this);
         newAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String FirstName = firstName.getEditText().getText().toString();
-                String LastName = lastName.getEditText().getText().toString();
-                String Email = email.getEditText().getText().toString();
-                String Phone = phone.getEditText().getText().toString();
-                String UserName = userName.getEditText().getText().toString();
-                String Password = password.getEditText().getText().toString();
-                String ConfirmPassword = confirmpassword.getEditText().getText().toString();
+                final String FirstName = firstName.getEditText().getText().toString();
+                final String LastName = lastName.getEditText().getText().toString();
+                final String Email = email.getEditText().getText().toString();
+                final String Phone = phone.getEditText().getText().toString();
+                final String UserName = userName.getEditText().getText().toString();
+                final String Password = password.getEditText().getText().toString();
+                final String ConfirmPassword = confirmpassword.getEditText().getText().toString();
                 // validating if the text fields are empty or not.
                 if (!Email.isEmpty()){
                     if (!Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {
@@ -102,12 +109,11 @@ public class CreateAccount extends AppCompatActivity {
                 builder.setPositiveButton("Yes, Log in!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
-                            String EncryptedPassword = encrypt.Encrypt(Password);
-                            db.AddUser(UserName, EncryptedPassword, FirstName, LastName, Email, Phone);
-                            Log.d("Encrypted Password",EncryptedPassword);
-                            Log.d("Password",Password);
-                            db.close();
-                        } catch (Exception e) {
+                            String hash = Sl.hashPassword(Password);
+                            String Salt = Sl.getSalt();
+                            String SaltedHashPassword = Salt + hash;
+                            db.AddUser(UserName, SaltedHashPassword, FirstName, LastName, Email, Phone, Salt);
+                        } catch (NoSuchAlgorithmException e) {
                             throw new RuntimeException(e);
                         }
                         finish();

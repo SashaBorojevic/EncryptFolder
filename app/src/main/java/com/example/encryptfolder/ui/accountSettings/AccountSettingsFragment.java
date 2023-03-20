@@ -19,8 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.encryptfolder.CreateAccount;
 import com.example.encryptfolder.R;
 import com.example.encryptfolder.databinding.FragmentGalleryBinding;
-import com.example.encryptfolder.ui.Database.AESCrypt;
 import com.example.encryptfolder.ui.Database.DBHelper;
+import com.example.encryptfolder.ui.Database.SaltedHash;
 import com.example.encryptfolder.ui.Database.SaveSharedPreference;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -31,8 +31,8 @@ public class AccountSettingsFragment extends Fragment {
     private FragmentGalleryBinding binding;
     private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
     DBHelper db;
-    String EncryptedPassword = "";
-    AESCrypt encrypt;
+    SaltedHash Sl;
+    String SaltedHashPassword = "";
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -56,7 +56,7 @@ public class AccountSettingsFragment extends Fragment {
         Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
 
-        encrypt = new AESCrypt();
+        Sl = new SaltedHash();
         db = new DBHelper(getActivity());
 
         updateAccount.setOnClickListener(new View.OnClickListener() {
@@ -104,13 +104,13 @@ public class AccountSettingsFragment extends Fragment {
                 }
                 try {
                     if (!Password.isEmpty()) {
-                        //EncryptedPassword = encrypt.Encrypt(UserName ,Password);
+                        String hash = Sl.hashPassword(Password);
+                        String Salt = db.getUserSalt(SaveSharedPreference.getUserName(getContext()));
+                        String pepper = Sl.getPepper();
+                        SaltedHashPassword = Salt + hash + pepper;
                     }
-                    db.updateUser(SaveSharedPreference.getUserName(getContext()),UserName, EncryptedPassword, FirstName, LastName, Email, Phone);
-                    Log.d("Encrypted Password",EncryptedPassword);
-                    Log.d("Password",Password);
+                    db.updateUser(SaveSharedPreference.getUserName(getContext()),UserName, SaltedHashPassword, FirstName, LastName, Email, Phone);
                     Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
-
                     db.close();
                 } catch (Exception e) {
                     throw new RuntimeException(e);

@@ -9,8 +9,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.example.encryptfolder.ui.Database.AESCrypt;
 import com.example.encryptfolder.ui.Database.DBHelper;
 import com.example.encryptfolder.ui.Database.DeCryptor;
 import com.example.encryptfolder.ui.Database.EnCryptor;
@@ -111,7 +109,8 @@ public class CreateAccount extends AppCompatActivity {
                         try {
                             String hash = Sl.hashPassword(Password);
                             String Salt = Sl.getSalt();
-                            String SaltedHashPassword = Salt + hash;
+                            String pepper = Sl.getPepper();
+                            String SaltedHashPassword = Salt + hash + pepper;
                             db.AddUser(UserName, SaltedHashPassword, FirstName, LastName, Email, Phone, Salt);
                         } catch (NoSuchAlgorithmException e) {
                             throw new RuntimeException(e);

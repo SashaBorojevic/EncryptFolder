@@ -31,6 +31,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "phoneNumber TEXT, " +
                 "salt TEXT)");
         DB.execSQL("create Table Documents(" +
+                "image BLOB," +
+                "docID INTEGER," +
                 "username TEXT," +
                 "dateAdded TEXT," +
                 "DocumentName TEXT)");
@@ -60,6 +62,19 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("salt", salt);
 
         long result = DB.insert("Users", null, contentValues);
+        return result;
+    }
+    public long AddDucument(byte[] image ,int docID, String username, String date, String docName ) {
+        //insert user into database
+        SQLiteDatabase DB = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("image", image);
+        contentValues.put("docID", docID);
+        contentValues.put("username", username);
+        contentValues.put("dateAdded", date);
+        contentValues.put("DocumentName", docName);
+
+        long result = DB.insert("Documents", null, contentValues);
         return result;
     }
 

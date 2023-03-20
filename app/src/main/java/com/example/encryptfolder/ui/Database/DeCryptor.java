@@ -35,7 +35,7 @@ public class DeCryptor {
         keyStore.load(null);
     }
 
-    public String decryptData(final String alias, String encryptedData, final byte[] encryptionIv)
+    public byte[] decryptData(final String alias, final byte[] encryptedData, final byte[] encryptionIv)
             throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException,
             NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IOException,
             BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
@@ -43,9 +43,7 @@ public class DeCryptor {
         final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
         final GCMParameterSpec spec = new GCMParameterSpec(128, encryptionIv);
         cipher.init(Cipher.DECRYPT_MODE, getSecretKey(alias), spec);
-        byte[] decryptedValue64 = Base64.decode(encryptedData, Base64.DEFAULT);
-
-        return new String(cipher.doFinal(decryptedValue64), "UTF-8");
+        return cipher.doFinal(encryptedData);
     }
 
     private SecretKey getSecretKey(final String alias) throws NoSuchAlgorithmException,

@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.encryptfolder.ui.Database.AESCrypt;
 import com.example.encryptfolder.ui.Database.DBHelper;
 import com.example.encryptfolder.ui.Database.DeCryptor;
 import com.example.encryptfolder.ui.Database.EnCryptor;
@@ -64,7 +63,8 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         String hash = Sl.hashPassword(password);
                         String salt = db.getUserSalt(userName);
-                        String UserEnteredPassword = salt + hash;
+                        String pepper = Sl.getPepper();
+                        String UserEnteredPassword = salt + hash + pepper;
                         Log.d("Database Password: ",userPassword);
                         Log.d("User entered password: ",UserEnteredPassword);
                         if(UserEnteredPassword.equals(userPassword)) {

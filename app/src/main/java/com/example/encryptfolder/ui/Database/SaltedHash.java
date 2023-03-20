@@ -6,6 +6,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class SaltedHash {
+    private static final String pepper = "1Hbsfhfgkg67a48dkfDEJ78";
 
     public static String hashPassword(String password) throws NoSuchAlgorithmException {
 
@@ -29,5 +30,8 @@ public class SaltedHash {
         sr.nextBytes(salt);
         return Base64.getEncoder().encodeToString(salt);
 
+    }
+    public static String getPepper(){
+        return pepper;
     }
 }

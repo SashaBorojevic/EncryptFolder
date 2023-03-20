@@ -18,6 +18,8 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -32,40 +34,37 @@ public class EnCryptor {
 
     private byte[] encryption;
     private byte[] iv;
-
-    public String encryptText(String alias,String textToEncrypt)
+    KeyStore keyStore;
+    public byte[] encryptText(String alias,final byte[] DataToEncrypt)
             throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException,
             NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IOException,
             InvalidAlgorithmParameterException, SignatureException, BadPaddingException,
-            IllegalBlockSizeException {
+            IllegalBlockSizeException, CertificateException {
 
         final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(alias));
-
         iv = cipher.getIV();
-        byte [] encryptedByteValue = cipher.doFinal(textToEncrypt.getBytes("utf-8"));
-        return new String(encryptedByteValue, "UTF-8");
+        //cipher.doFinal(DataToEncrypt);
+        return cipher.doFinal(DataToEncrypt);
     }
 
     @NonNull
     private SecretKey getSecretKey(final String alias) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidAlgorithmParameterException {
+            NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException {
 
-        KeyGenerator keyGenerator;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-            keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
-                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                    .build());
-        } else {
-            keyGenerator = KeyGenerator.getInstance("AES", ANDROID_KEY_STORE);
-            SecureRandom secureRandom = new SecureRandom(alias.getBytes());
-            keyGenerator.init(128, secureRandom);
+        keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+        keyStore.load(null);
+        if (!keyStore.containsAlias(alias)) {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+            keyGenerator.init(
+                    new KeyGenParameterSpec.Builder(alias,
+                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                            .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                            .setRandomizedEncryptionRequired(false)
+                            .build());
+            keyGenerator.generateKey();
         }
-        return keyGenerator.generateKey();
+        return (SecretKey) keyStore.getKey(alias, null);
     }
 
     byte[] getEncryption() {

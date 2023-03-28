@@ -15,14 +15,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.example.encryptfolder.R;
 import com.example.encryptfolder.databinding.FragmentAddNewDocumentBinding;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class AddNewDocument extends Fragment {
 
@@ -33,6 +41,11 @@ public class AddNewDocument extends Fragment {
     ImageView chosenImage;
     ImageView cameraImage;
 
+    Bitmap image = null;
+    ImageView preview;
+
+    TextView dateAdded;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,15 +55,24 @@ public class AddNewDocument extends Fragment {
         }
         binding = FragmentAddNewDocumentBinding.inflate(inflater, container, false);
         root = binding.getRoot();
+
+        preview = root.findViewById(R.id.imagePreview);
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        dateAdded = root.findViewById(R.id.currentDate);
+        dateAdded.setText("Date Added: "+date);
         Button chooseIMage = root.findViewById(R.id.choose_image);
-        cameraImage = root.findViewById(R.id.cameraImage);
         chosenImage = root.findViewById(R.id.imageView);
         Button takePicture = root.findViewById(R.id.take_picture);
-        Button addDocument = root.findViewById(R.id.choose_document);
+
         ActivityResultLauncher<PickVisualMediaRequest> gfgMediaPicker = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
             if (uri != null) {
-                Log.d("PhotoPicker", "Selected URI: " + uri);
-                chosenImage.setImageURI(uri);
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), uri);
+                    preview.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             } else {
                 Log.d("Opened the picker", "Select something geek");
             }
@@ -70,24 +92,23 @@ public class AddNewDocument extends Fragment {
             }
         });
 
-        addDocument.setOnClickListener(new View.OnClickListener() {
+        /*addDocument.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                chooseFile.setType("*/*");
-                chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-                startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
-            }
-        });
+                chooseFile.setType("*///*");
+                //chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+                //startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+            //}
+        //});
 
         return root;
     }
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            cameraImage.setImageBitmap(imageBitmap);
+            preview.setImageBitmap(imageBitmap);
         }
     }
     @Override

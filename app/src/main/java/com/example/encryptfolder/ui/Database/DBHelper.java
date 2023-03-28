@@ -32,7 +32,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "salt TEXT)");
         DB.execSQL("create Table Documents(" +
                 "image BLOB," +
-                "docID INTEGER," +
                 "username TEXT," +
                 "dateAdded TEXT," +
                 "DocumentName TEXT)");

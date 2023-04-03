@@ -62,14 +62,19 @@ public class AccountSettingsFragment extends Fragment {
         updateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String FirstName = firstName.getEditText().getText().toString();
-                String LastName = lastName.getEditText().getText().toString();
-                String Email = email.getEditText().getText().toString();
-                String Phone = phone.getEditText().getText().toString();
-                String UserName = userName.getEditText().getText().toString();
-                String Password = password.getEditText().getText().toString();
-                String ConfirmPassword = confirmpassword.getEditText().getText().toString();
+                String FirstName = firstName.getEditText().getText().toString().trim();
+                String LastName = lastName.getEditText().getText().toString().trim();
+                String Email = email.getEditText().getText().toString().trim();
+                String Phone = phone.getEditText().getText().toString().trim();
+                String UserName = userName.getEditText().getText().toString().trim();
+                String Password = password.getEditText().getText().toString().trim();
+                String ConfirmPassword = confirmpassword.getEditText().getText().toString().trim();
                 // validating if the text fields are empty or not.
+                if (FirstName.isEmpty() && LastName.isEmpty() && Email.isEmpty() && Phone.isEmpty() &&
+                UserName.isEmpty() && Password.isEmpty()){
+                    Toast.makeText(getActivity(), "All fields are empty!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (!Email.isEmpty()){
                     if (!Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {
                         Toast.makeText(getActivity(), "Please enter a valid Email Address", Toast.LENGTH_SHORT).show();
@@ -108,10 +113,18 @@ public class AccountSettingsFragment extends Fragment {
                         String Salt = db.getUserSalt(SaveSharedPreference.getUserName(getContext()));
                         String pepper = Sl.getPepper();
                         SaltedHashPassword = Salt + hash + pepper;
+
                     }
                     db.updateUser(SaveSharedPreference.getUserName(getContext()),UserName, SaltedHashPassword, FirstName, LastName, Email, Phone);
                     Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
                     db.close();
+                    firstName.getEditText().getText().clear();
+                    lastName.getEditText().getText().clear();
+                    email.getEditText().getText().clear();
+                    phone.getEditText().getText().clear();
+                    userName.getEditText().getText().clear();
+                    password.getEditText().getText().clear();
+                    confirmpassword.getEditText().getText().clear();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

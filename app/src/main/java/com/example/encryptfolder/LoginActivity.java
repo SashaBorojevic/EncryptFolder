@@ -39,11 +39,12 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.password);
         loading = findViewById(R.id.loading);
         Button createAccount = findViewById(R.id.createAccount);
-        db = new DBHelper(LoginActivity.this);
+
         Sl = new SaltedHash();
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                db = new DBHelper(LoginActivity.this);
                 String userName = user.getText().toString();
                 String password = pass.getText().toString();
                 String userPassword = db.getUserPassword(userName);
@@ -74,21 +75,25 @@ public class LoginActivity extends AppCompatActivity {
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
-                            db.close();
+
                         }
                         else {
                             Toast.makeText(LoginActivity.this, "Incorrect Password!", Toast.LENGTH_SHORT).show();
                             return;
                         }
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
+
                 }
                 else {
                     Toast.makeText(LoginActivity.this, "Invalid Username!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                db.close();
             }
+
         });
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override

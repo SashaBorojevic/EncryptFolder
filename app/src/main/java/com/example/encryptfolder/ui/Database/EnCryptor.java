@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -20,6 +22,7 @@ import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -27,51 +30,33 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class EnCryptor {
-    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
-    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
-
-    private byte[] encryption;
-    private byte[] iv;
-    KeyStore keyStore;
-    public byte[] encryptText(String alias,final byte[] DataToEncrypt)
-            throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException,
-            NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IOException,
-            InvalidAlgorithmParameterException, SignatureException, BadPaddingException,
-            IllegalBlockSizeException, CertificateException {
-
-        final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(alias));
-        iv = cipher.getIV();
-        //cipher.doFinal(DataToEncrypt);
-        return cipher.doFinal(DataToEncrypt);
+    private static final String ALGO = "AES";
+    private static final byte[] keyValue =
+            new byte[] { 'T', 'h', 'e', 'B', 'e', 's', 't',
+                    'S', 'e', 'c', 'r','e', 't', 'K', 'e', 'y' };
+    public byte[] Encrypt(byte[] Data, String salt) throws Exception {
+        Key key = generateKey(salt);
+        Cipher c = Cipher.getInstance(ALGO);
+        c.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encVal = c.doFinal(Data);
+        return encVal;
     }
 
-    @NonNull
-    private SecretKey getSecretKey(final String alias) throws NoSuchAlgorithmException,
-            NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException, CertificateException, IOException, UnrecoverableKeyException {
-
-        keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
-        keyStore.load(null);
-        if (!keyStore.containsAlias(alias)) {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-            keyGenerator.init(
-                    new KeyGenParameterSpec.Builder(alias,
-                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                            .setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                            .setRandomizedEncryptionRequired(false)
-                            .build());
-            keyGenerator.generateKey();
-        }
-        return (SecretKey) keyStore.getKey(alias, null);
+    public byte[] Decrypt(byte[] encryptedData, String salt) throws Exception {
+        Key key = generateKey(salt);
+        Cipher c = Cipher.getInstance(ALGO);
+        c.init(Cipher.DECRYPT_MODE, key);
+        byte[] decValue = c.doFinal(encryptedData);
+        return decValue;
     }
-
-    byte[] getEncryption() {
-        return encryption;
-    }
-
-    public byte[] getIv() {
-        return iv;
+    private static Key generateKey(String salt) throws Exception {
+        byte[] bytes = salt.getBytes();
+        byte[] partkey = Arrays.copyOf(bytes, 32);
+        Key key = new SecretKeySpec(partkey, ALGO);
+        return key;
     }
 }
+

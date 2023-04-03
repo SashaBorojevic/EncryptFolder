@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.encryptfolder.ui.home.ImageModel;
+
 import java.io.UnsupportedEncodingException;
 import java.sql.Blob;
 import java.text.ParseException;
@@ -31,6 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "phoneNumber TEXT, " +
                 "salt TEXT)");
         DB.execSQL("create Table Documents(" +
+                "imageID INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 "image BLOB," +
                 "username TEXT," +
                 "dateAdded TEXT," +
@@ -63,12 +66,11 @@ public class DBHelper extends SQLiteOpenHelper {
         long result = DB.insert("Users", null, contentValues);
         return result;
     }
-    public long AddDucument(byte[] image ,int docID, String username, String date, String docName ) {
+    public long AddDucument(byte[] image,String username, String date, String docName ) {
         //insert user into database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("image", image);
-        contentValues.put("docID", docID);
         contentValues.put("username", username);
         contentValues.put("dateAdded", date);
         contentValues.put("DocumentName", docName);
@@ -76,6 +78,31 @@ public class DBHelper extends SQLiteOpenHelper {
         long result = DB.insert("Documents", null, contentValues);
         return result;
     }
+    public Cursor getAllDocuments(String username){
+        //gets all employees that have 1 in the "active" category
+        SQLiteDatabase DB = this.getWritableDatabase();
+        return DB.rawQuery("Select * from Documents where username = ?", new String[] {String.valueOf(username)});
+    }
+    public ImageModel getImageByID(int imageID){
+        SQLiteDatabase DB = this.getWritableDatabase();
+        ImageModel image;
+        Cursor cursor = DB.rawQuery("Select * from Documents where imageID = ?",
+                new String[] {String.valueOf(imageID)});
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
+            image = new ImageModel(
+                    cursor.getBlob(1),
+                    cursor.getString(3),
+                    cursor.getString(4)
+            );
+        } else{
+            image = null;
+        }
+        return image;
+}
+
+
+
 
     public Boolean isUsernameValid(String username){
         //check if username exists already

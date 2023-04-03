@@ -42,8 +42,19 @@
         app:layout_constraintTop_toBottomOf="@+id/choose_image"
         app:layout_constraintVertical_bias="1.0" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="*Required"
+        android:textColor="#FF0000"
+        app:layout_constraintBottom_toTopOf="@+id/docName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.911"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/docName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:hint="Document Name"
@@ -52,7 +63,13 @@
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imagePreview"
-        app:layout_constraintVertical_bias="0.072" />
+        app:layout_constraintVertical_bias="0.076">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/currentDate"
@@ -64,9 +81,10 @@
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/docName"
-        app:layout_constraintVertical_bias="0.088" />
+        app:layout_constraintVertical_bias="0.108" />
 
     <Button
+        android:id="@+id/saveImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save Your Image"
@@ -74,6 +92,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentDate"
-        app:layout_constraintVertical_bias="0.337" />
+        app:layout_constraintVertical_bias="0.177" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

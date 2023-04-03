@@ -60,13 +60,13 @@ public class CreateAccount extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String FirstName = firstName.getEditText().getText().toString();
-                final String LastName = lastName.getEditText().getText().toString();
-                final String Email = email.getEditText().getText().toString();
-                final String Phone = phone.getEditText().getText().toString();
-                final String UserName = userName.getEditText().getText().toString();
-                final String Password = password.getEditText().getText().toString();
-                final String ConfirmPassword = confirmpassword.getEditText().getText().toString();
+                final String FirstName = firstName.getEditText().getText().toString().trim();
+                final String LastName = lastName.getEditText().getText().toString().trim();
+                final String Email = email.getEditText().getText().toString().trim();
+                final String Phone = phone.getEditText().getText().toString().trim();
+                final String UserName = userName.getEditText().getText().toString().trim();
+                final String Password = password.getEditText().getText().toString().trim();
+                final String ConfirmPassword = confirmpassword.getEditText().getText().toString().trim();
                 // validating if the text fields are empty or not.
                 if (!Email.isEmpty()){
                     if (!Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {

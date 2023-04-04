@@ -25,12 +25,7 @@
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="350dp"
@@ -43,12 +38,7 @@
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="350dp"
@@ -61,12 +51,7 @@
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="350dp"
@@ -81,36 +66,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/createUsername"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:hint="Create Username">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-        <TextView
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:text="Password Requirements:\n- Minimum password length: 8
             \n- At least one uppercase character (A — Z) \n- At least one lowercase character (a — z) \n- At least one digit (0 — 9)"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -127,12 +88,7 @@
                 app:passwordToggleEnabled="true"/>
 
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="350dp"
@@ -149,12 +105,7 @@
                 app:passwordToggleEnabled="true"/>
 
         </com.google.android.material.textfield.TextInputLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "
-            android:textColor="#FF0000"
-            android:layout_marginLeft="145dp"/>
+
         <Button
             android:id="@+id/update"
             android:layout_width="wrap_content"

@@ -47,7 +47,6 @@ public class AccountSettingsFragment extends Fragment {
         lastName = root.findViewById(R.id.lastName);
         email = root.findViewById(R.id.email);
         phone = root.findViewById(R.id.phoneNumber);
-        userName = root.findViewById(R.id.createUsername);
         password = root.findViewById(R.id.password);
         confirmpassword = root.findViewById(R.id.confirmPassword);
         Button updateAccount = root.findViewById(R.id.update);
@@ -66,12 +65,10 @@ public class AccountSettingsFragment extends Fragment {
                 String LastName = lastName.getEditText().getText().toString().trim();
                 String Email = email.getEditText().getText().toString().trim();
                 String Phone = phone.getEditText().getText().toString().trim();
-                String UserName = userName.getEditText().getText().toString().trim();
                 String Password = password.getEditText().getText().toString().trim();
                 String ConfirmPassword = confirmpassword.getEditText().getText().toString().trim();
                 // validating if the text fields are empty or not.
-                if (FirstName.isEmpty() && LastName.isEmpty() && Email.isEmpty() && Phone.isEmpty() &&
-                UserName.isEmpty() && Password.isEmpty()){
+                if (FirstName.isEmpty() && LastName.isEmpty() && Email.isEmpty() && Phone.isEmpty() && Password.isEmpty()){
                     Toast.makeText(getActivity(), "All fields are empty!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -80,10 +77,6 @@ public class AccountSettingsFragment extends Fragment {
                         Toast.makeText(getActivity(), "Please enter a valid Email Address", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                }
-                if (db.isUsernameValid(UserName) == false) {
-                    Toast.makeText(getActivity(), "Username already used!", Toast.LENGTH_SHORT).show();
-                    return;
                 }
                 if (!Password.isEmpty()){
                     if (Password.length() < 8) {
@@ -109,13 +102,11 @@ public class AccountSettingsFragment extends Fragment {
                 }
                 try {
                     if (!Password.isEmpty()) {
-                        String hash = Sl.hashPassword(Password);
                         String Salt = db.getUserSalt(SaveSharedPreference.getUserName(getContext()));
                         String pepper = Sl.getPepper();
-                        SaltedHashPassword = Salt + hash + pepper;
-
+                        SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
                     }
-                    db.updateUser(SaveSharedPreference.getUserName(getContext()),UserName, SaltedHashPassword, FirstName, LastName, Email, Phone);
+                    db.updateUser(SaveSharedPreference.getUserName(getContext()), SaltedHashPassword, FirstName, LastName, Email, Phone);
                     Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
                     db.close();
                     firstName.getEditText().getText().clear();

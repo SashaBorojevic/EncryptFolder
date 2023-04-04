@@ -107,10 +107,9 @@ public class CreateAccount extends AppCompatActivity {
                 builder.setPositiveButton("Yes, Log in!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
-                            String hash = Sl.hashPassword(Password);
                             String Salt = Sl.getSalt();
                             String pepper = Sl.getPepper();
-                            String SaltedHashPassword = Salt + hash + pepper;
+                            String SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
                             db.AddUser(UserName, SaltedHashPassword, FirstName, LastName, Email, Phone, Salt);
                         } catch (NoSuchAlgorithmException e) {
                             throw new RuntimeException(e);

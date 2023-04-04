@@ -129,12 +129,11 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
     }
-    public Boolean updateUser(String oldUsername, String newUsername, String newPassword, String firstName, String lastName,String email,
+    public Boolean updateUser(String oldUsername, String newPassword, String firstName, String lastName,String email,
                               String phone){
         //update employees email in database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        if (!newUsername.isEmpty()){contentValues.put("username", newUsername);}
         if (!newPassword.isEmpty()){contentValues.put("password", newPassword);}
         if (!firstName.isEmpty()){contentValues.put("firstName", firstName);}
         if (!lastName.isEmpty()){contentValues.put("lastName", lastName);}

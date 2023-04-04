@@ -62,10 +62,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (userPassword!=null){
                     try {
-                        String hash = Sl.hashPassword(password);
                         String salt = db.getUserSalt(userName);
                         String pepper = Sl.getPepper();
-                        String UserEnteredPassword = salt + hash + pepper;
+                        String UserEnteredPassword = Sl.hashPassword(salt+password+pepper);
                         Log.d("Database Password: ",userPassword);
                         Log.d("User entered password: ",UserEnteredPassword);
                         if(UserEnteredPassword.equals(userPassword)) {

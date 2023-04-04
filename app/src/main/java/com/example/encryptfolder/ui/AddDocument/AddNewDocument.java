@@ -90,6 +90,7 @@ public class AddNewDocument extends Fragment {
                     image.compress(Bitmap.CompressFormat.JPEG,100,stream);
                     // Initialize byte array
                     imageBytes = stream.toByteArray();
+                    stream.close();
 
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -148,6 +149,11 @@ public class AddNewDocument extends Fragment {
             image.compress(Bitmap.CompressFormat.JPEG,100,stream);
             // Initialize byte array
             imageBytes = stream.toByteArray();
+            try {
+                stream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

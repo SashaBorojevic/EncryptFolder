@@ -37,8 +37,6 @@ public class AccountSettingsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        GalleryViewModel galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
 
         binding = FragmentGalleryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -55,12 +53,12 @@ public class AccountSettingsFragment extends Fragment {
         Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
 
-        Sl = new SaltedHash();
-        db = new DBHelper(getActivity());
 
         updateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Sl = new SaltedHash();
+                db = new DBHelper(getActivity());
                 String FirstName = firstName.getEditText().getText().toString().trim();
                 String LastName = lastName.getEditText().getText().toString().trim();
                 String Email = email.getEditText().getText().toString().trim();
@@ -107,13 +105,12 @@ public class AccountSettingsFragment extends Fragment {
                         SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
                     }
                     db.updateUser(SaveSharedPreference.getUserName(getContext()), SaltedHashPassword, FirstName, LastName, Email, Phone);
-                    Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
                     db.close();
+                    Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
                     firstName.getEditText().getText().clear();
                     lastName.getEditText().getText().clear();
                     email.getEditText().getText().clear();
                     phone.getEditText().getText().clear();
-                    userName.getEditText().getText().clear();
                     password.getEditText().getText().clear();
                     confirmpassword.getEditText().getText().clear();
                 } catch (Exception e) {

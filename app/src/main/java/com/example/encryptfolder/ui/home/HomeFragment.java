@@ -94,7 +94,7 @@ public class HomeFragment extends Fragment implements ImagesRecylerViewInterface
     @Override
     public void onResume() {
         super.onResume();;
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Home - All Images");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Home");
     }
     @Override
     public void onDestroyView() {

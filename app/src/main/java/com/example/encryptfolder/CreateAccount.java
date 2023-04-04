@@ -54,8 +54,7 @@ public class CreateAccount extends AppCompatActivity {
         Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
         Pattern lowerCasePatten = Pattern.compile("[a-z ]");
         Pattern digitCasePatten = Pattern.compile("[0-9 ]");
-        Sl = new SaltedHash();
-        db = new DBHelper(CreateAccount.this);
+
         newAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,6 +66,8 @@ public class CreateAccount extends AppCompatActivity {
                 final String UserName = userName.getEditText().getText().toString().trim();
                 final String Password = password.getEditText().getText().toString().trim();
                 final String ConfirmPassword = confirmpassword.getEditText().getText().toString().trim();
+                Sl = new SaltedHash();
+                db = new DBHelper(CreateAccount.this);
                 // validating if the text fields are empty or not.
                 if (!Email.isEmpty()){
                     if (!Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {
@@ -111,6 +112,7 @@ public class CreateAccount extends AppCompatActivity {
                             String pepper = Sl.getPepper();
                             String SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
                             db.AddUser(UserName, SaltedHashPassword, FirstName, LastName, Email, Phone, Salt);
+                            db.close();
                         } catch (NoSuchAlgorithmException e) {
                             throw new RuntimeException(e);
                         }
@@ -131,5 +133,9 @@ public class CreateAccount extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();;
+        CreateAccount.this.getSupportActionBar().setTitle("Create an Account");
+    }
 }

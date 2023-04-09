@@ -42,7 +42,6 @@ public class AccountSettingsFragment extends Fragment {
         View root = binding.getRoot();
 
         firstName = root.findViewById(R.id.firstName);
-        lastName = root.findViewById(R.id.lastName);
         email = root.findViewById(R.id.email);
         phone = root.findViewById(R.id.phoneNumber);
         password = root.findViewById(R.id.password);
@@ -60,13 +59,12 @@ public class AccountSettingsFragment extends Fragment {
                 Sl = new SaltedHash();
                 db = new DBHelper(getActivity());
                 String FirstName = firstName.getEditText().getText().toString().trim();
-                String LastName = lastName.getEditText().getText().toString().trim();
                 String Email = email.getEditText().getText().toString().trim();
                 String Phone = phone.getEditText().getText().toString().trim();
                 String Password = password.getEditText().getText().toString().trim();
                 String ConfirmPassword = confirmpassword.getEditText().getText().toString().trim();
                 // validating if the text fields are empty or not.
-                if (FirstName.isEmpty() && LastName.isEmpty() && Email.isEmpty() && Phone.isEmpty() && Password.isEmpty()){
+                if (FirstName.isEmpty() && Email.isEmpty() && Phone.isEmpty() && Password.isEmpty()){
                     Toast.makeText(getActivity(), "All fields are empty!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -104,11 +102,10 @@ public class AccountSettingsFragment extends Fragment {
                         String pepper = Sl.getPepper();
                         SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
                     }
-                    db.updateUser(SaveSharedPreference.getUserName(getContext()), SaltedHashPassword, FirstName, LastName, Email, Phone);
+                    db.updateUser(SaveSharedPreference.getUserName(getContext()), SaltedHashPassword, FirstName, Email, Phone);
                     db.close();
                     Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
                     firstName.getEditText().getText().clear();
-                    lastName.getEditText().getText().clear();
                     email.getEditText().getText().clear();
                     phone.getEditText().getText().clear();
                     password.getEditText().getText().clear();

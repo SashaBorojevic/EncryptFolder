@@ -33,7 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 
 public class CreateAccount extends AppCompatActivity {
 
-    private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
+    private TextInputLayout firstName, email, phone, userName, password, confirmpassword;
     DBHelper db;
     SaltedHash Sl;
     @Override
@@ -42,7 +42,6 @@ public class CreateAccount extends AppCompatActivity {
         setContentView(R.layout.activity_create_account);
 
         firstName = findViewById(R.id.firstName);
-        lastName = findViewById(R.id.lastName);
         email = findViewById(R.id.email);
         phone = findViewById(R.id.phoneNumber);
         userName = findViewById(R.id.createUsername);
@@ -60,7 +59,6 @@ public class CreateAccount extends AppCompatActivity {
             public void onClick(View view) {
 
                 final String FirstName = firstName.getEditText().getText().toString().trim();
-                final String LastName = lastName.getEditText().getText().toString().trim();
                 final String Email = email.getEditText().getText().toString().trim();
                 final String Phone = phone.getEditText().getText().toString().trim();
                 final String UserName = userName.getEditText().getText().toString().trim();
@@ -111,7 +109,7 @@ public class CreateAccount extends AppCompatActivity {
                             String Salt = Sl.getSalt();
                             String pepper = Sl.getPepper();
                             String SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
-                            db.AddUser(UserName, SaltedHashPassword, FirstName, LastName, Email, Phone, Salt);
+                            db.AddUser(UserName, SaltedHashPassword, FirstName, Email, Phone, Salt);
                             db.close();
                         } catch (NoSuchAlgorithmException e) {
                             throw new RuntimeException(e);
@@ -121,11 +119,13 @@ public class CreateAccount extends AppCompatActivity {
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        db.close();
                         dialog.dismiss();
                     }
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                db.close();
             }
         });
     }

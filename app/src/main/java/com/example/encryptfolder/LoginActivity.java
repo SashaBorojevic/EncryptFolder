@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                         String salt = db.getUserSalt(userName);
                         String pepper = Sl.getPepper();
                         String UserEnteredPassword = Sl.hashPassword(salt+password+pepper);
+                        db.close();
                         Log.d("Database Password: ",userPassword);
                         Log.d("User entered password: ",UserEnteredPassword);
                         if(UserEnteredPassword.equals(userPassword)) {
@@ -74,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
+                            finish();
 
                         }
                         else {
@@ -84,13 +86,12 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-
+                db.close();
                 }
                 else {
                     Toast.makeText(LoginActivity.this, "Invalid Username!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                db.close();
             }
 
         });

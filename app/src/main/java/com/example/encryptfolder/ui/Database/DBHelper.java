@@ -27,8 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
         DB.execSQL("create Table Users(" +
                 "username TEXT," +
                 "password TEXT," +
-                "firstName TEXT," +
-                "lastName TEXT," +
+                "fullName TEXT," +
                 "emailAddress TEXT, " +
                 "phoneNumber TEXT, " +
                 "salt TEXT)");
@@ -48,7 +47,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public long AddUser(String username,String password,String firstName,
-                                  String lastName,
                                   String email,
                                   String phoneNumber,
                                   String salt) {
@@ -57,8 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
         contentValues.put("password", password);
-        contentValues.put("firstName", firstName);
-        contentValues.put("lastName", lastName);
+        contentValues.put("fullName", firstName);
         contentValues.put("emailAddress", email);
         contentValues.put("phoneNumber", phoneNumber);
         contentValues.put("salt", salt);
@@ -99,10 +96,7 @@ public class DBHelper extends SQLiteOpenHelper {
             image = null;
         }
         return image;
-}
-
-
-
+    }
 
     public Boolean isUsernameValid(String username){
         //check if username exists already
@@ -129,14 +123,13 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
     }
-    public Boolean updateUser(String oldUsername, String newPassword, String firstName, String lastName,String email,
+    public Boolean updateUser(String oldUsername, String newPassword, String firstName,String email,
                               String phone){
         //update employees email in database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         if (!newPassword.isEmpty()){contentValues.put("password", newPassword);}
-        if (!firstName.isEmpty()){contentValues.put("firstName", firstName);}
-        if (!lastName.isEmpty()){contentValues.put("lastName", lastName);}
+        if (!firstName.isEmpty()){contentValues.put("fullName", firstName);}
         if (!email.isEmpty()){contentValues.put("emailAddress", email);}
         if (!phone.isEmpty()){contentValues.put("phoneNumber", phone);}
 

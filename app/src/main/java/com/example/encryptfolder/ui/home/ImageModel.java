@@ -7,8 +7,6 @@ import com.example.encryptfolder.ui.Database.DBHelper;
 import com.example.encryptfolder.ui.Database.EnCryptor;
 
 public class ImageModel {
-    EnCryptor decrypt;
-    DBHelper db;
     public byte [] image;
     public String dateAdded;
     public String docName;
@@ -26,7 +24,7 @@ public class ImageModel {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
     public String getDateCreated(){
-        return "Date Added:" + dateAdded;
+        return "Date Added: " + dateAdded;
     }
     public String getDocumentName(){
         return docName;

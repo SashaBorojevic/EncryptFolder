@@ -42,7 +42,6 @@ public class ViewImageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         setHasOptionsMenu(true);
         // fragment listening to system back button
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {

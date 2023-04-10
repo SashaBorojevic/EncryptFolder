@@ -27,9 +27,14 @@ public class DBHelper extends SQLiteOpenHelper {
         DB.execSQL("create Table Users(" +
                 "username TEXT," +
                 "password TEXT," +
-                "fullName TEXT," +
+                "firstName TEXT," +
+                "lastName TEXT," +
                 "emailAddress TEXT, " +
                 "phoneNumber TEXT, " +
+                "security1 TEXT, " +
+                "security2 TEXT, " +
+                "answer1 TEXT, " +
+                "answer2 TEXT, " +
                 "salt TEXT)");
         DB.execSQL("create Table Documents(" +
                 "imageID INTEGER PRIMARY KEY AUTOINCREMENT,"+
@@ -46,8 +51,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(DB);
     }
 
-    public long AddUser(String username,String password,String firstName,
-                                  String email,
+    public long AddUser(String username,String password,String firstName, String lastName, String email,
                                   String phoneNumber,
                                   String salt) {
         //insert user into database
@@ -55,7 +59,8 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("username", username);
         contentValues.put("password", password);
-        contentValues.put("fullName", firstName);
+        contentValues.put("firstName", firstName);
+        contentValues.put("lastName", lastName);
         contentValues.put("emailAddress", email);
         contentValues.put("phoneNumber", phoneNumber);
         contentValues.put("salt", salt);
@@ -109,7 +114,6 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
         }
     }
-
     public String getUserPassword(String username){
         //check if username exists already
         SQLiteDatabase DB = this.getWritableDatabase();
@@ -123,15 +127,69 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
     }
-    public Boolean updateUser(String oldUsername, String newPassword, String firstName,String email,
-                              String phone){
+    public String getSecurityQuestion1(String username){
+        //check if username exists already
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?", new String[] {String.valueOf(username)});
+        if (cursor.moveToFirst()) {
+            int placeColumn = cursor.getColumnIndex("security1");
+            String password = cursor.getString(placeColumn);
+            return password;
+        }
+        else{
+            return null;
+        }
+    }
+    public String getSecurityQuestion2(String username){
+        //check if username exists already
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?", new String[] {String.valueOf(username)});
+        if (cursor.moveToFirst()) {
+            int placeColumn = cursor.getColumnIndex("security2");
+            String password = cursor.getString(placeColumn);
+            return password;
+        }
+        else{
+            return null;
+        }
+    }
+    public String getAnswer1(String username){
+        //check if username exists already
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?", new String[] {String.valueOf(username)});
+        if (cursor.moveToFirst()) {
+            int placeColumn = cursor.getColumnIndex("answer1");
+            String password = cursor.getString(placeColumn);
+            return password;
+        }
+        else{
+            return null;
+        }
+    }
+    public String getAnswer2(String username){
+        //check if username exists already
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Users where username = ?", new String[] {String.valueOf(username)});
+        if (cursor.moveToFirst()) {
+            int placeColumn = cursor.getColumnIndex("answer2");
+            String password = cursor.getString(placeColumn);
+            return password;
+        }
+        else{
+            return null;
+        }
+    }
+    public Boolean updateUser(String oldUsername, String newPassword,String email, String Security1, String Security2
+        , String Answer1, String Answer2){
         //update employees email in database
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         if (!newPassword.isEmpty()){contentValues.put("password", newPassword);}
-        if (!firstName.isEmpty()){contentValues.put("fullName", firstName);}
         if (!email.isEmpty()){contentValues.put("emailAddress", email);}
-        if (!phone.isEmpty()){contentValues.put("phoneNumber", phone);}
+        if (!Security1.isEmpty()){contentValues.put("security1", Security1);}
+        if (!Security2.isEmpty()){contentValues.put("security2", Security2);}
+        if (!Answer1.isEmpty()){contentValues.put("answer1", Answer1);}
+        if (!Answer2.isEmpty()){contentValues.put("answer2", Answer2);}
 
         Cursor cursor = DB.rawQuery("Select * from Users where username = ?",
                 new String[] {String.valueOf(oldUsername)});

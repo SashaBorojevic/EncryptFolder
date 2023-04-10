@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.password);
         loading = findViewById(R.id.loading);
         Button createAccount = findViewById(R.id.createAccount);
+        Button resetPassword = findViewById(R.id.resetPassword);
 
         Sl = new SaltedHash();
         login.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(UserEnteredPassword.equals(userPassword)) {
                             loading.setVisibility(View.VISIBLE);
                             SaveSharedPreference.setUserName(LoginActivity.this, userName);
-                            Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Welcome "+userName, Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(i);
@@ -101,6 +102,35 @@ public class LoginActivity extends AppCompatActivity {
                 loading.setVisibility(View.VISIBLE);
                 Intent intent = new Intent(LoginActivity.this, CreateAccount.class);
                 startActivity(intent);
+            }
+        });
+        resetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db = new DBHelper(LoginActivity.this);
+                String userName = user.getText().toString();
+                if (userName.isEmpty()){
+                    Toast.makeText(LoginActivity.this, "Please enter a valid Username!", Toast.LENGTH_SHORT).show();
+                    db.close();
+                    return;
+                }
+                if (db.isUsernameValid(userName) == false) {
+                    SaveSharedPreference.setUserName(LoginActivity.this, userName);
+                    if (db.getAnswer1(userName) == null){
+                        Toast.makeText(LoginActivity.this, "This account does not have password recovery!", Toast.LENGTH_SHORT).show();
+                        db.close();
+                        return;
+                    }
+                    loading.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent(LoginActivity.this, ResetPassword.class);
+                    startActivity(intent);
+                    db.close();
+                }
+                else {
+                    Toast.makeText(LoginActivity.this, "Username was not found", Toast.LENGTH_SHORT).show();
+                    db.close();
+                    return;
+                }
             }
         });
     }

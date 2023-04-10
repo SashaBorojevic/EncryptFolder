@@ -33,7 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 
 public class CreateAccount extends AppCompatActivity {
 
-    private TextInputLayout firstName, email, phone, userName, password, confirmpassword;
+    private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
     DBHelper db;
     SaltedHash Sl;
     @Override
@@ -42,6 +42,7 @@ public class CreateAccount extends AppCompatActivity {
         setContentView(R.layout.activity_create_account);
 
         firstName = findViewById(R.id.firstName);
+        lastName = findViewById(R.id.lastName);
         email = findViewById(R.id.email);
         phone = findViewById(R.id.phoneNumber);
         userName = findViewById(R.id.createUsername);
@@ -59,6 +60,7 @@ public class CreateAccount extends AppCompatActivity {
             public void onClick(View view) {
 
                 final String FirstName = firstName.getEditText().getText().toString().trim();
+                final String LastName = lastName.getEditText().getText().toString().trim();
                 final String Email = email.getEditText().getText().toString().trim();
                 final String Phone = phone.getEditText().getText().toString().trim();
                 final String UserName = userName.getEditText().getText().toString().trim();
@@ -102,14 +104,15 @@ public class CreateAccount extends AppCompatActivity {
                     return;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateAccount.this);
-                builder.setMessage("Are you sure you want to create a new account?");
+                builder.setMessage("RECOMMEND: Please add security questions to your account in the Account Settings in order to recover account in case of a forgotten password." +
+                        " Are you sure you want to create a new account?");
                 builder.setPositiveButton("Yes, Log in!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
                             String Salt = Sl.getSalt();
                             String pepper = Sl.getPepper();
                             String SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
-                            db.AddUser(UserName, SaltedHashPassword, FirstName, Email, Phone, Salt);
+                            db.AddUser(UserName, SaltedHashPassword, FirstName, LastName, Email, Phone, Salt);
                             db.close();
                         } catch (NoSuchAlgorithmException e) {
                             throw new RuntimeException(e);

@@ -6,7 +6,9 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +31,10 @@ import java.util.regex.Pattern;
 public class AccountSettingsFragment extends Fragment {
 
     private FragmentGalleryBinding binding;
-    private TextInputLayout firstName, lastName, email, phone, userName, password, confirmpassword;
+    private TextInputLayout answer1,answer2, email, password, confirmpassword;
     DBHelper db;
     SaltedHash Sl;
+    Spinner dropdown1, dropdown2;
     String SaltedHashPassword = "";
 
 
@@ -41,12 +44,29 @@ public class AccountSettingsFragment extends Fragment {
         binding = FragmentGalleryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        firstName = root.findViewById(R.id.firstName);
         email = root.findViewById(R.id.email);
-        phone = root.findViewById(R.id.phoneNumber);
         password = root.findViewById(R.id.password);
         confirmpassword = root.findViewById(R.id.confirmPassword);
+        answer1 = root.findViewById(R.id.answer1);
+        answer2 = root.findViewById(R.id.answer2);
         Button updateAccount = root.findViewById(R.id.update);
+        dropdown1 = root.findViewById(R.id.spinner1);
+        dropdown2 = root.findViewById(R.id.spinner2);
+
+
+        String[] items1 = new String[]{"In what city were you born?",
+                "What is the name of your favorite pet?",
+                "What is your mother's maiden name?",
+                "What high school did you attend?",
+                "What was the name of your elementary school?"};
+        String[] items2 = new String[]{"What was the make of your first car?",
+                "What was your favorite food as a child?",
+                "Where did you meet your spouse?",
+                "What year was your father (or mother) born?"};
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, items1);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_dropdown_item, items2);
+        dropdown1.setAdapter(adapter1);
+        dropdown2.setAdapter(adapter2);
 
         Pattern UpperCasePatten = Pattern.compile("[A-Z ]");
         Pattern lowerCasePatten = Pattern.compile("[a-z ]");
@@ -58,14 +78,24 @@ public class AccountSettingsFragment extends Fragment {
             public void onClick(View view) {
                 Sl = new SaltedHash();
                 db = new DBHelper(getActivity());
-                String FirstName = firstName.getEditText().getText().toString().trim();
                 String Email = email.getEditText().getText().toString().trim();
-                String Phone = phone.getEditText().getText().toString().trim();
                 String Password = password.getEditText().getText().toString().trim();
                 String ConfirmPassword = confirmpassword.getEditText().getText().toString().trim();
+                String Answer1 = answer1.getEditText().getText().toString().trim();
+                String Answer2 = answer2.getEditText().getText().toString().trim();
+                String text1 = dropdown1.getSelectedItem().toString();
+                String text2 = dropdown2.getSelectedItem().toString();
                 // validating if the text fields are empty or not.
-                if (FirstName.isEmpty() && Email.isEmpty() && Phone.isEmpty() && Password.isEmpty()){
+                if (Email.isEmpty() && Password.isEmpty() && Answer1.isEmpty() && Answer2.isEmpty()){
                     Toast.makeText(getActivity(), "All fields are empty!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (Answer1.isEmpty() && !Answer2.isEmpty()){
+                    Toast.makeText(getActivity(), "Please provide an answer for Security Question 1", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!Answer1.isEmpty() && Answer2.isEmpty()){
+                    Toast.makeText(getActivity(), "Please provide an answer for Security Question 2", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (!Email.isEmpty()){
@@ -96,20 +126,24 @@ public class AccountSettingsFragment extends Fragment {
                         return;
                     }
                 }
+                if (Answer1.isEmpty() && Answer2.isEmpty()){
+                    text1 = "";
+                    text2 = "";
+                }
                 try {
                     if (!Password.isEmpty()) {
                         String Salt = db.getUserSalt(SaveSharedPreference.getUserName(getContext()));
                         String pepper = Sl.getPepper();
                         SaltedHashPassword = Sl.hashPassword(Salt+Password+pepper);
                     }
-                    db.updateUser(SaveSharedPreference.getUserName(getContext()), SaltedHashPassword, FirstName, Email, Phone);
+                    db.updateUser(SaveSharedPreference.getUserName(getContext()), SaltedHashPassword, Email, text1, text2, Answer1, Answer2);
                     db.close();
                     Toast.makeText(getActivity(), "User profile updated!", Toast.LENGTH_SHORT).show();
-                    firstName.getEditText().getText().clear();
                     email.getEditText().getText().clear();
-                    phone.getEditText().getText().clear();
                     password.getEditText().getText().clear();
                     confirmpassword.getEditText().getText().clear();
+                    answer1.getEditText().getText().clear();
+                    answer2.getEditText().getText().clear();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
